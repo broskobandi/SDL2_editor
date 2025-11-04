@@ -33,7 +33,7 @@ int main(void) {
 			sdl.poll_events();
 			sdl.clear({30, 70, 70, 255});
 
-			browser.update(sdl.win_size(), sdl.get_scroll_speed());
+			browser.update(sdl.win_size(), sdl.get_scroll_speed(), sdl.get_mouse_pos());
 			sdl.draw(browser.render_data());
 			sdl.present();
 		}

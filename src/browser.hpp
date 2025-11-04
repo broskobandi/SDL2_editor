@@ -45,8 +45,9 @@ private:
 
 public:
 
-	void update(std::pair<int, int> win_size, int scroll_speed) {
-		thumbnails_offset += scroll_speed;
+	void update(std::pair<int, int> win_size, int scroll_speed, std::pair<int,int> mouse_pos) {
+		if (mouse_pos.first < panel.w)
+			thumbnails_offset += scroll_speed;
 		set_panel_size(win_size);
 		set_thumbnails_size();
 	}

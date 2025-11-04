@@ -59,6 +59,7 @@ private:
 	std::map<std::string, Texture> textures_map;
 	bool is_running {true};
 	int scroll_speed {0};
+	std::pair<int, int> mouse_pos;
 
 public:
 
@@ -180,6 +181,7 @@ public:
 				default: break;
 			}
 		}
+		SDL_GetMouseState(&mouse_pos.first, &mouse_pos.second);
 		if (!is_scrolling) {
 			if (scroll_speed > 0)
 				scroll_speed--;
@@ -195,6 +197,10 @@ public:
 
 	int get_scroll_speed() {
 		return scroll_speed;
+	}
+
+	auto get_mouse_pos() {
+		return mouse_pos;
 	}
 
 	void draw(const RenderData& data) {
