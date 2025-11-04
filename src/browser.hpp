@@ -22,22 +22,54 @@ private:
 	std::vector<std::string> paths_to_bmps;
 	std::vector<SDL_Rect> thumbnails;
 
-public:
-	void update(std::pair<int, int> win_size) {
+	void set_panel_size(std::pair<int, int> win_size) {
 		panel.w = static_cast<int>(static_cast<float>(win_size.first) * panel_width_multiplier);
 		panel.h = win_size.second;
 		panel.x = 0;
 		panel.y = 0;
+	}
 
+	void set_thumbnails_size() {
+		if (!thumbnails.size())
+			throw std::runtime_error("Thumbnails vector is empty.");
 		int i = 0;
 		for (auto& t : thumbnails) {
 			t.x = 0;
-			t.y = i * panel.w;
+			t.y = panel.w * i;
 			t.w = panel.w;
 			t.h = panel.w;
 			i++;
 		}
 	}
+
+public:
+
+	void update_thumbnails(int scroll_speed) {
+		// int i = 0;
+		for (auto& t : thumbnails) {
+			t.y += scroll_speed;
+			// i++;
+		}
+	}
+
+	// void update(std::pair<int, int> win_size, int scroll_speed) {
+	// 	set_panel_size(win_size);
+	// 	// panel.w = static_cast<int>(static_cast<float>(win_size.first) * panel_width_multiplier);
+	// 	// panel.h = win_size.second;
+	// 	// panel.x = 0;
+	// 	// panel.y = 0;
+	//
+	// 	int i = 0;
+	// 	for (auto& t : thumbnails) {
+	// 		t.x = 0;
+	// 		t.y = i * panel.w;
+	// 		// t.y += scroll_speed + i * panel.w;
+	// 		t.y += scroll_speed;
+	// 		t.w = panel.w;
+	// 		t.h = panel.w;
+	// 		i++;
+	// 	}
+	// }
 	Browser(
 		std::pair<int, int> win_size,
 		float panel_width_multiplier,
@@ -46,6 +78,8 @@ public:
 	) :
 		panel_width_multiplier(panel_width_multiplier), panel_col(panel_col)
 	{
+		set_panel_size(win_size);
+
 		try {
 
 			std::filesystem::directory_iterator dir_iter(path);
@@ -58,17 +92,13 @@ public:
 				}
 			}
 
-			if (!paths_to_bmps.size()) {
-				throw std::runtime_error("No bmp files found in directory.");
-			} else {
-				DBGMSG(paths_to_bmps.size() << " bmp files found in directory.");
-			}
+			DBGMSG(paths_to_bmps.size() << " bmp files found in directory.");
 
 		} catch (const std::filesystem::filesystem_error&) {
 			throw std::runtime_error("Invalid path.");
 		}
 
-		update(win_size);
+		set_thumbnails_size();
 	}
 
 	auto render_data() {
