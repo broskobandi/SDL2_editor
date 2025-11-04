@@ -5,6 +5,7 @@
 
 #include "core.hpp"
 #include <cstddef>
+#include <cstdlib>
 #include <string>
 #include <utility>
 #include <vector>
@@ -48,6 +49,14 @@ public:
 	void update(std::pair<int, int> win_size, int scroll_speed, std::pair<int,int> mouse_pos) {
 		if (mouse_pos.first < panel.w)
 			thumbnails_offset += scroll_speed;
+		if (thumbnails.front().y > 0)
+			// thumbnails_offset--;
+			thumbnails_offset -= 5;
+		if (thumbnails.back().y < panel.h - panel.w)
+			// thumbnails_offset++;
+			thumbnails_offset += 5;
+		if (std::abs(thumbnails_offset) <= 5)
+			thumbnails_offset = 0;
 		set_panel_size(win_size);
 		set_thumbnails_size();
 	}
