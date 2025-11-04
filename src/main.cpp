@@ -29,37 +29,11 @@ int main(void) {
 
 		sdl.load_texture(browser.get_paths_to_bmps());
 
-		SDL_Event event;
-		bool is_running = true;
-		int scroll_speed = 0;
-		bool is_scrolling = false;
-		while (is_running) {
-			is_scrolling = false;
-			while (SDL_PollEvent(&event)) {
-				switch (event.type) {
-					case SDL_KEYDOWN:
-						if (event.key.keysym.sym == SDLK_q)
-							is_running = false;
-						break;
-					case SDL_MOUSEWHEEL:
-						is_scrolling = true;
-						scroll_speed += event.wheel.y;
-						break;
-					default: break;
-				}
-			}
+		while (sdl.get_is_running()) {
+			sdl.poll_events();
 			sdl.clear({30, 70, 70, 255});
-			if (!is_scrolling) {
-				if (scroll_speed > 0)
-					scroll_speed--;
-				if (scroll_speed < 0)
-					scroll_speed++;
-			}
-			std::cout << scroll_speed << "\n";
-			// int x, y;
-			// SDL_GetMouseState(&x, &y);
-			// browser.update(sdl.win_size(), scroll_speed);
-			browser.update(sdl.win_size(), scroll_speed);
+
+			browser.update(sdl.win_size(), sdl.get_scroll_speed());
 			sdl.draw(browser.render_data());
 			sdl.present();
 		}

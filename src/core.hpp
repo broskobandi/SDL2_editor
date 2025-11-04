@@ -57,6 +57,8 @@ private:
 	Window win;
 	Renderer ren;
 	std::map<std::string, Texture> textures_map;
+	bool is_running {true};
+	int scroll_speed {0};
 
 public:
 
@@ -160,6 +162,39 @@ public:
 		for (const auto& path : paths_to_bmps) {
 			load_texture(path);
 		}
+	}
+
+	void poll_events() {
+		bool is_scrolling = false;
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+				case SDL_KEYDOWN:
+					if (event.key.keysym.sym == SDLK_q)
+						is_running = false;
+					break;
+				case SDL_MOUSEWHEEL:
+					is_scrolling = true;
+					scroll_speed += event.wheel.y;
+					break;
+				default: break;
+			}
+		}
+		if (!is_scrolling) {
+			if (scroll_speed > 0)
+				scroll_speed--;
+			if (scroll_speed < 0)
+				scroll_speed++;
+		}
+		clear({30, 70, 70, 255});
+	}
+
+	bool get_is_running() {
+		return is_running;
+	}
+
+	int get_scroll_speed() {
+		return scroll_speed;
 	}
 
 	void draw(const RenderData& data) {
