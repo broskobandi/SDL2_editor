@@ -59,7 +59,7 @@ int main(void) {
 			// int x, y;
 			// SDL_GetMouseState(&x, &y);
 			// browser.update(sdl.win_size(), scroll_speed);
-			browser.update_thumbnails(scroll_speed);
+			browser.update(sdl.win_size(), scroll_speed);
 			sdl.draw(browser.render_data());
 			sdl.present();
 		}

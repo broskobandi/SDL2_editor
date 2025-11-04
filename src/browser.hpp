@@ -21,6 +21,7 @@ private:
 	SDL_Rect panel;
 	std::vector<std::string> paths_to_bmps;
 	std::vector<SDL_Rect> thumbnails;
+	int thumbnails_offset {0};
 
 	void set_panel_size(std::pair<int, int> win_size) {
 		panel.w = static_cast<int>(static_cast<float>(win_size.first) * panel_width_multiplier);
@@ -35,7 +36,7 @@ private:
 		int i = 0;
 		for (auto& t : thumbnails) {
 			t.x = 0;
-			t.y = panel.w * i;
+			t.y = panel.w * i + thumbnails_offset;
 			t.w = panel.w;
 			t.h = panel.w;
 			i++;
@@ -44,32 +45,12 @@ private:
 
 public:
 
-	void update_thumbnails(int scroll_speed) {
-		// int i = 0;
-		for (auto& t : thumbnails) {
-			t.y += scroll_speed;
-			// i++;
-		}
+	void update(std::pair<int, int> win_size, int scroll_speed) {
+		thumbnails_offset += scroll_speed;
+		set_panel_size(win_size);
+		set_thumbnails_size();
 	}
 
-	// void update(std::pair<int, int> win_size, int scroll_speed) {
-	// 	set_panel_size(win_size);
-	// 	// panel.w = static_cast<int>(static_cast<float>(win_size.first) * panel_width_multiplier);
-	// 	// panel.h = win_size.second;
-	// 	// panel.x = 0;
-	// 	// panel.y = 0;
-	//
-	// 	int i = 0;
-	// 	for (auto& t : thumbnails) {
-	// 		t.x = 0;
-	// 		t.y = i * panel.w;
-	// 		// t.y += scroll_speed + i * panel.w;
-	// 		t.y += scroll_speed;
-	// 		t.w = panel.w;
-	// 		t.h = panel.w;
-	// 		i++;
-	// 	}
-	// }
 	Browser(
 		std::pair<int, int> win_size,
 		float panel_width_multiplier,
