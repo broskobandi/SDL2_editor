@@ -39,3 +39,12 @@
 
 # debug information files
 *.dwo
+
+# Swap files
+*.swp
+
+# Build dir
+build
+
+# Cache
+.cache
