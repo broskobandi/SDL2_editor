@@ -5,12 +5,14 @@
 
 int main(void) {
 	try {
-	[[maybe_unused]] Core::Sdl sdl(
+	Core::Sdl sdl(
 		SDL_INIT_EVERYTHING,
 		"test",
 		800, 600,
-		SDL_WINDOW_SHOWN
+		SDL_WINDOW_SHOWN,
+		SDL_RENDERER_PRESENTVSYNC
 	);
+	sdl.load_texture("/home/broskobandi/Projects/SDL2_editor/test/assets/face.bmp");
 	} catch (const std::runtime_error& e) {
 		std::cerr << e.what() << "\n";
 	}
