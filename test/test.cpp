@@ -5,7 +5,12 @@
 
 int main(void) {
 	try {
-	[[maybe_unused]] Core::Sdl sdl;
+	[[maybe_unused]] Core::Sdl sdl(
+		SDL_INIT_EVERYTHING,
+		"test",
+		800, 600,
+		SDL_WINDOW_SHOWN
+	);
 	} catch (const std::runtime_error& e) {
 		std::cerr << e.what() << "\n";
 	}
