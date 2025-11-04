@@ -7,11 +7,9 @@
 #include <vector>
 #include <filesystem>
 
-namespace Browser {
-
 using namespace Core;
 
-class Panel {
+class Browser {
 
 private:
 
@@ -25,7 +23,7 @@ public:
 		panel.w = static_cast<int>(static_cast<float>(win_size.first) * panel_width_multiplier);
 		panel.h = win_size.second;
 	}
-	Panel(
+	Browser(
 		std::pair<int, int> win_size,
 		float panel_width_multiplier,
 		SDL_Color panel_col,
@@ -68,7 +66,5 @@ public:
 	}
 
 };
-
-}
 
 #endif

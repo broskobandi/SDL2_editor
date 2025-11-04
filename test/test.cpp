@@ -5,7 +5,6 @@
 #include "browser.hpp"
 
 using namespace Core;
-using namespace Browser;
 
 int main(void) {
 	try {
@@ -25,10 +24,10 @@ int main(void) {
 		data.col_or_path_to_tex = path;
 		sdl.draw(data);
 
-		Panel panel(
+		Browser browser(
 			sdl.win_size(), 0.1f, {100, 100, 100, 255},
 			"/home/broskobandi/Projects/SDL2_editor/test/assets");
-		sdl.draw(panel.render_data());
+		sdl.draw(browser.render_data());
 
 	} catch (const std::runtime_error& e) {
 
