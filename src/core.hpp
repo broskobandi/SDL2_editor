@@ -1,3 +1,5 @@
+/** @file src/core.hpp */
+
 #ifndef CORE_HPP
 #define CORE_HPP
 
@@ -181,6 +183,12 @@ public:
 			if (SDL_RenderFillRect(ren.get(), dstrect))
 				throw std::runtime_error("Failed to fill rect.");
 			DBGMSG("Rect rendered.");
+		}
+	}
+
+	void draw(std::vector<RenderData> data) {
+		for (const auto& d : data) {
+			draw(d);
 		}
 	}
 };

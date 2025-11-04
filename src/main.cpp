@@ -1,3 +1,5 @@
+/** @file src/main.cpp */
+
 #include "core.hpp"
 #include "browser.hpp"
 #include <iostream>
