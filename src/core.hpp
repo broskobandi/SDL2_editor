@@ -60,6 +60,7 @@ private:
 	bool is_running {true};
 	int scroll_speed {0};
 	std::pair<int, int> mouse_pos;
+	bool left_click {false};
 
 public:
 
@@ -167,6 +168,7 @@ public:
 
 	void poll_events() {
 		bool is_scrolling = false;
+		left_click = false;
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -177,6 +179,10 @@ public:
 				case SDL_MOUSEWHEEL:
 					is_scrolling = true;
 					scroll_speed += event.wheel.y;
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					if (event.button.button == SDL_BUTTON_LEFT)
+						left_click = true;
 					break;
 				default: break;
 			}
@@ -201,6 +207,10 @@ public:
 
 	auto get_mouse_pos() {
 		return mouse_pos;
+	}
+
+	bool get_left_click() {
+		return left_click;
 	}
 
 	void draw(const RenderData& data) {

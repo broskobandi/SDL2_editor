@@ -19,7 +19,8 @@ private:
 	struct Thumbnail {
 		SDL_Rect rect;
 		std::string path_to_bmp;
-		bool is_highlighted = {false};
+		// bool is_selected {false};
+		// bool is_highlighted = {false};
 	};
 
 	float panel_width_multiplier;
@@ -27,6 +28,7 @@ private:
 	SDL_Rect panel;
 	std::vector<Thumbnail> thumbnails;
 	int thumbnails_offset {0};
+	std::string selected_bmp;
 
 	void set_panel_size(std::pair<int, int> win_size) {
 		panel.w = static_cast<int>(static_cast<float>(win_size.first) * panel_width_multiplier);
@@ -48,13 +50,45 @@ private:
 		}
 	}
 
-	// void highlight_thumbnail(std::pair<int,int> mouse_pos) {
-	//
-	// }
+	void set_thumbnail_highlight(std::pair<int,int> mouse_pos, bool left_click) {
+		for (auto& t : thumbnails) {
+			if (
+				mouse_pos.first < panel.w &&
+				mouse_pos.second < t.rect.y + t.rect.w &&
+				mouse_pos.second > t.rect.y
+			) {
+				t.rect.w += t.rect.w / 10;
+				t.rect.x -= t.rect.w / 20;
+				t.rect.h += t.rect.w / 10;
+				t.rect.y -= t.rect.w / 20;
+				if (left_click) {
+					if (t.path_to_bmp != selected_bmp) {
+					// if (!t.is_selected) {
+						// t.is_selected = true;
+						selected_bmp = t.path_to_bmp;
+					} else {
+						// t.is_selected = false;
+						selected_bmp.clear();
+					}
+				}
+			}
+			// if (t.is_selected) {
+			// 	t.rect.w -= t.rect.w / 10;
+			// 	t.rect.x += t.rect.w / 20;
+			// 	t.rect.h -= t.rect.w / 10;
+			// 	t.rect.y += t.rect.w / 20;
+			// }
+		}
+	}
 
 public:
 
-	void update(std::pair<int, int> win_size, int scroll_speed, std::pair<int,int> mouse_pos) {
+	void update(
+		std::pair<int, int> win_size,
+		int scroll_speed,
+		std::pair<int,int> mouse_pos,
+		bool left_click
+	) {
 		if (mouse_pos.first < panel.w)
 			thumbnails_offset += scroll_speed;
 		if (thumbnails.front().rect.y > 0)
@@ -66,6 +100,7 @@ public:
 			thumbnails_offset = 0;
 		set_panel_size(win_size);
 		set_thumbnails_size();
+		set_thumbnail_highlight(mouse_pos, left_click);
 	}
 
 	Browser(
@@ -94,7 +129,6 @@ public:
 				}
 			}
 
-			// DBGMSG(paths_to_bmps.size() << " bmp files found in directory.");
 			DBGMSG(thumbnails.size() << " bmp files found in directory.");
 
 		} catch (const std::filesystem::filesystem_error&) {
@@ -116,10 +150,16 @@ public:
 
 		// Thumbnails
 
-		// int i = 0;
 		for (const auto& t : thumbnails) {
 			RenderData thumbnail;
-			thumbnail.dstrect = t.rect;
+			SDL_Rect rect = t.rect;
+			if (t.path_to_bmp == selected_bmp) {
+				rect.w -= rect.w / 10;
+				rect.x += rect.w / 20;
+				rect.h -= rect.w / 10;
+				rect.y += rect.w / 20;
+			}
+			thumbnail.dstrect = rect;
 			thumbnail.col_or_path_to_tex = t.path_to_bmp;
 			data.push_back(thumbnail);
 		}

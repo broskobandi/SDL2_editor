@@ -24,7 +24,7 @@ int main(void) {
 
 		sdl.load_texture(browser.get_paths_to_bmps());
 
-		browser.update(sdl.win_size(), 0, sdl.get_mouse_pos());
+		browser.update(sdl.win_size(), 0, sdl.get_mouse_pos(), sdl.get_left_click());
 
 		sdl.draw(browser.render_data());
 
