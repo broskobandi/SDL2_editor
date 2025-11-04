@@ -65,6 +65,9 @@ public:
 		return data;
 	}
 
+	auto get_paths_to_bmps() {
+		return paths_to_bmps;
+	}
 };
 
 #endif

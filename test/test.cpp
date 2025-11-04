@@ -29,6 +29,8 @@ int main(void) {
 			sdl.win_size(), 0.1f, {100, 100, 100, 255},
 			"/home/broskobandi/Projects/SDL2_editor/test/assets");
 
+		sdl.load_texture(browser.get_paths_to_bmps());
+
 		CTEST(1);
 
 	} catch (const std::runtime_error& e) {

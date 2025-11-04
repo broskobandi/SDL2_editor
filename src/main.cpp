@@ -25,6 +25,8 @@ int main(void) {
 			"/home/broskobandi/Projects/SDL2_editor/test/assets"
 		);
 
+		sdl.load_texture(browser.get_paths_to_bmps());
+
 		SDL_Event event;
 		bool is_running = true;
 		while (is_running) {

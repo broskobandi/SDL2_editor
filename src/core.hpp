@@ -10,6 +10,7 @@
 #include <string_view>
 #include <utility>
 #include <variant>
+#include <vector>
 
 #ifndef NDEBUG
 #include <iostream>
@@ -117,7 +118,7 @@ public:
 
 	void load_texture(std::string path_to_bmp) {
 		if (textures_map.find(path_to_bmp) != textures_map.end()) {
-			DBGMSG("Texture was loaded earlier.");
+			DBGMSG("Texture was loaded earlier for bmp: " << path_to_bmp);
 			return;
 		}
 		auto sur = Surface(
@@ -151,6 +152,12 @@ public:
 		if (!textures_map.emplace(path_to_bmp, std::move(tex)).second)
 			throw std::runtime_error("Failed to emplace new texture into map.");
 		DBGMSG("New texture emplaced into map.");
+	}
+
+	void load_texture(std::vector<std::string> paths_to_bmps) {
+		for (const auto& path : paths_to_bmps) {
+			load_texture(path);
+		}
 	}
 
 	void draw(const RenderData& data) {
