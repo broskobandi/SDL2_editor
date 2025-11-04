@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include "core.hpp"
 
+using namespace Core;
+
 int main(void) {
 	try {
 	Core::Sdl sdl(
@@ -12,7 +14,13 @@ int main(void) {
 		SDL_WINDOW_SHOWN,
 		SDL_RENDERER_PRESENTVSYNC
 	);
-	sdl.load_texture("/home/broskobandi/Projects/SDL2_editor/test/assets/face.bmp");
+	std::string path = "/home/broskobandi/Projects/SDL2_editor/test/assets/face.bmp";
+	sdl.load_texture(path);
+	RenderData data;
+	data.dstrect = {0, 0, 50, 50};
+	sdl.draw(data);
+	data.col_or_path_to_tex = path;
+	sdl.draw(data);
 	} catch (const std::runtime_error& e) {
 		std::cerr << e.what() << "\n";
 	}

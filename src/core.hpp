@@ -4,10 +4,12 @@
 #include <SDL2/SDL.h>
 #include <map>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 #include <utility>
+#include <variant>
 
 #ifndef NDEBUG
 #include <iostream>
@@ -23,6 +25,14 @@ using Window = std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>;
 using Renderer = std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)>;
 using Texture = std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)>;
 using Surface = std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)>;
+
+struct RenderData {
+	std::optional<SDL_Rect> srcrect {std::nullopt};
+	std::optional<SDL_Rect> dstrect {std::nullopt};
+	std::variant<SDL_Color, std::string> col_or_path_to_tex {SDL_Color{0, 0, 0, 255}};
+	float angle {0.0f};
+	SDL_RendererFlip flip {SDL_FLIP_NONE};
+};
 
 class Sdl {
 
@@ -141,6 +151,30 @@ public:
 		if (!textures_map.emplace(path_to_bmp, std::move(tex)).second)
 			throw std::runtime_error("Failed to emplace new texture into map.");
 		DBGMSG("New texture emplaced into map.");
+	}
+
+	void draw(const RenderData& data) {
+		const SDL_Rect* srcrect =
+			data.srcrect.has_value() ? &data.srcrect.value() : nullptr;
+		const SDL_Rect* dstrect =
+			data.dstrect.has_value() ? &data.dstrect.value() : nullptr;
+		if (std::holds_alternative<std::string>(data.col_or_path_to_tex)) {
+			auto tex = textures_map.find(std::get<std::string>(data.col_or_path_to_tex));
+			if (tex == textures_map.end())
+				throw std::runtime_error("Failed to find texture.");
+			if (
+				SDL_RenderCopyEx(ren.get(), tex->second.get(), srcrect, dstrect, 
+				data.angle, nullptr, data.flip)
+			)
+				throw std::runtime_error("Failed to render texture.");
+			DBGMSG("Texture rendered.");
+		} else if (std::holds_alternative<SDL_Color>(data.col_or_path_to_tex)) {
+			SDL_Color col = std::get<SDL_Color>(data.col_or_path_to_tex);
+			set_draw_color(col);
+			if (SDL_RenderFillRect(ren.get(), dstrect))
+				throw std::runtime_error("Failed to fill rect.");
+			DBGMSG("Rect rendered.");
+		}
 	}
 };
 
