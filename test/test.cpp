@@ -16,6 +16,7 @@ int main(void) {
 			SDL_WINDOW_SHOWN,
 			SDL_RENDERER_PRESENTVSYNC
 		);
+
 		std::string path = "/home/broskobandi/Projects/SDL2_editor/test/assets/face.bmp";
 		sdl.load_texture(path);
 		RenderData data;
@@ -27,10 +28,12 @@ int main(void) {
 		Browser browser(
 			sdl.win_size(), 0.1f, {100, 100, 100, 255},
 			"/home/broskobandi/Projects/SDL2_editor/test/assets");
-		sdl.draw(browser.render_data());
+
+		CTEST(1);
 
 	} catch (const std::runtime_error& e) {
 
+		CTEST(0);
 		std::cerr << e.what() << "\n";
 	}
 
