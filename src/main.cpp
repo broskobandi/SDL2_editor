@@ -39,7 +39,7 @@ int main(void) {
 				}
 			}
 			sdl.clear({30, 70, 70, 255});
-			browser.update_size(sdl.win_size());
+			browser.update(sdl.win_size());
 			sdl.draw(browser.render_data());
 			sdl.present();
 		}

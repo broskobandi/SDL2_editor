@@ -17,11 +17,22 @@ private:
 	SDL_Color panel_col;
 	SDL_Rect panel;
 	std::vector<std::string> paths_to_bmps;
+	std::vector<SDL_Rect> thumbnails;
 
 public:
-	void update_size(std::pair<int, int> win_size) {
+	void update(std::pair<int, int> win_size) {
 		panel.w = static_cast<int>(static_cast<float>(win_size.first) * panel_width_multiplier);
 		panel.h = win_size.second;
+		panel.x = 0;
+		panel.y = 0;
+
+		int i = 0;
+		for (auto& t : thumbnails) {
+			t.x = 0;
+			t.y = i * panel.w;
+			t.w = panel.w;
+			t.h = panel.h;
+		}
 	}
 	Browser(
 		std::pair<int, int> win_size,
@@ -31,12 +42,6 @@ public:
 	) :
 		panel_width_multiplier(panel_width_multiplier), panel_col(panel_col)
 	{
-		update_size(win_size);
-		panel.x = 0;
-		panel.y = 0;
-
-		// Get bmps
-
 		try {
 
 			std::filesystem::directory_iterator dir_iter(path);
@@ -56,13 +61,19 @@ public:
 		} catch (const std::filesystem::filesystem_error&) {
 			throw std::runtime_error("Invalid path.");
 		}
+
+		update(win_size);
 	}
 
 	auto render_data() {
+		// Panel
+		
 		RenderData data;
 		data.dstrect = panel;
 		data.col_or_path_to_tex = panel_col;
 		return data;
+
+		// Ttextures
 	}
 
 	auto get_paths_to_bmps() {
