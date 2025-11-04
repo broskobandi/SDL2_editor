@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include "core.hpp"
 #include "browser.hpp"
+#include "tiles.hpp"
 
 using namespace Core;
 
@@ -25,6 +26,12 @@ int main(void) {
 		sdl.load_texture(browser.get_paths_to_bmps());
 
 		browser.update(sdl.win_size(), 0, sdl.get_mouse_pos(), sdl.get_left_click());
+
+		Tiles tiles(4, 4, 64, {30, 70, 70, 255});
+
+		tiles.update(sdl.get_mouse_pos(), sdl.get_left_click(), "");
+
+		sdl.draw(tiles.render_data());
 
 		sdl.draw(browser.render_data());
 

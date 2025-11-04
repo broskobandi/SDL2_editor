@@ -1,13 +1,17 @@
+#define NDEBUG
 /** @file src/main.cpp */
 
 #include "core.hpp"
 #include "browser.hpp"
+#include "tiles.hpp"
 #include <iostream>
 #include <stdexcept>
 
 using namespace Core;
 
 int main(void) {
+
+	SDL_Color bg_col{30, 70, 70, 255};
 
 	try {
 
@@ -29,12 +33,18 @@ int main(void) {
 
 		sdl.load_texture(browser.get_paths_to_bmps());
 
+		// Tiles tiles(4, 4, 64, bg_col, browser.get_panel_w());
+		Tiles tiles(4, 4, 64, {100, 100, 100, 255}, browser.get_panel_w());
+
 		while (sdl.get_is_running()) {
 			sdl.poll_events();
-			sdl.clear({30, 70, 70, 255});
+			sdl.clear(bg_col);
 
 			browser.update(sdl.win_size(), sdl.get_scroll_speed(), sdl.get_mouse_pos(), sdl.get_left_click());
+			// tiles.update(browser.get_panel_w());
+			tiles.update(sdl.get_mouse_pos(), sdl.get_left_click(), browser.get_selected_bmp(), browser.get_panel_w());
 			sdl.draw(browser.render_data());
+			sdl.draw(tiles.render_data());
 			sdl.present();
 		}
 

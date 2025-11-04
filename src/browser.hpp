@@ -72,12 +72,6 @@ private:
 					}
 				}
 			}
-			// if (t.is_selected) {
-			// 	t.rect.w -= t.rect.w / 10;
-			// 	t.rect.x += t.rect.w / 20;
-			// 	t.rect.h -= t.rect.w / 10;
-			// 	t.rect.y += t.rect.w / 20;
-			// }
 		}
 	}
 
@@ -165,6 +159,14 @@ public:
 		}
 
 		return data;
+	}
+
+	std::string get_selected_bmp() {
+		return selected_bmp;
+	}
+
+	int get_panel_w() {
+		return panel.w;
 	}
 
 	auto get_paths_to_bmps() {

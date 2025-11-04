@@ -194,7 +194,7 @@ public:
 			if (scroll_speed < 0)
 				scroll_speed++;
 		}
-		clear({30, 70, 70, 255});
+		// clear({30, 70, 70, 255});
 	}
 
 	bool get_is_running() {
