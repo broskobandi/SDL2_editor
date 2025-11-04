@@ -25,7 +25,9 @@ int main(void) {
 		data.col_or_path_to_tex = path;
 		sdl.draw(data);
 
-		Panel panel(sdl.win_size(), 0.1f, {100, 100, 100, 255}, "/home/broskobandi/Projects/SDL2_editor/test/assets");
+		Panel panel(
+			sdl.win_size(), 0.1f, {100, 100, 100, 255},
+			"/home/broskobandi/Projects/SDL2_editor/test/assets");
 		sdl.draw(panel.render_data());
 
 	} catch (const std::runtime_error& e) {
