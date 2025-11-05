@@ -2,7 +2,6 @@
 #define TILES_HPP
 
 #include "core.hpp"
-#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -14,7 +13,7 @@ private:
 		SDL_Rect rect {0, 0, 0, 0};
 		std::string path_to_bmp;
 	};
-	int rows, cols, size;
+	int cols, size;
 	std::vector<Tile> tiles;
 	SDL_Color bg_col;
 
@@ -32,33 +31,17 @@ private:
 				cur_col = 0;
 			}
 		}
-		// for (int i = 0; i < rows; i++) {
-		// 	for (int j = 0; j < cols; j++) {
-		// 		// Tile tile;
-		// 		tiles.at(static_cast<std::size_t>(i)).rect = 
-		// 			{size * j + panel_w, size * i, size, size};
-		// 		// tiles.push_back(tile); // this is the problem
-		// 	}
-		// }
 	}
 
 public:
 	Tiles(int rows, int cols, int size, SDL_Color bg_col, int panel_w) :
-		rows(rows), cols(cols), size(size), bg_col(bg_col)
+		cols(cols), size(size), bg_col(bg_col)
 	{
-		// distribute_tiles(panel_w);
 		for (int i = 0; i < rows * cols; i++) {
 			Tile tile;
 			tiles.push_back(tile);
 		}
 		distribute_tiles(panel_w);
-		// for (int i = 0; i < rows; i++) {
-		// 	for (int j = 0; j < cols; j++) {
-		// 		Tile tile;
-		// 		tile.rect = {size * j + panel_w, size * i, size, size};
-		// 		tiles.push_back(tile);
-		// 	}
-		// }
 	}
 
 	auto render_data() {

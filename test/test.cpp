@@ -27,9 +27,9 @@ int main(void) {
 
 		browser.update(sdl.win_size(), 0, sdl.get_mouse_pos(), sdl.get_left_click());
 
-		Tiles tiles(4, 4, 64, {30, 70, 70, 255});
+		Tiles tiles(4, 4, 64, {30, 70, 70, 255}, browser.get_panel_w());
 
-		tiles.update(sdl.get_mouse_pos(), sdl.get_left_click(), "");
+		tiles.update(sdl.get_mouse_pos(), sdl.get_left_click(), "", browser.get_panel_w());
 
 		sdl.draw(tiles.render_data());
 
