@@ -29,7 +29,7 @@ int main(void) {
 
 		Tiles tiles(4, 4, 64, {30, 70, 70, 255}, browser.get_panel_w());
 
-		tiles.update(sdl.get_mouse_pos(), sdl.get_left_click(), "", browser.get_panel_w(), sdl.get_f_key(), sdl.get_r_key());
+		tiles.update(sdl.get_mouse_pos(), sdl.get_left_click(), "", browser.get_panel_w(), sdl.get_f_key(), sdl.get_r_key(), sdl.get_s_key());
 
 		sdl.draw(tiles.render_data());
 

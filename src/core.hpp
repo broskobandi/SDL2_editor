@@ -1,4 +1,32 @@
-/** @file src/core.hpp */
+/*
+MIT License
+
+Copyright (c) 2025 broskobandi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/** @file src/core.hpp
+ * @brief Private header file for the Core class. 
+ * @details This file contains the definition of the Core class which is 
+ * responsible for setting up the environment and managing the underlying 
+ * SDL objects/tasks/events. */
 
 #ifndef CORE_HPP
 #define CORE_HPP
@@ -24,22 +52,33 @@
 
 namespace Core {
 
+// Custom types, structs and enums.
+
 using Window = std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>;
 using Renderer = std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)>;
 using Texture = std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)>;
 using Surface = std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)>;
 
+/** POD struct that contains the rendering context of a particular object. */
 struct RenderData {
+	/** The portion of the texture to be rendered (or the full texture if nullopt). */
 	std::optional<SDL_Rect> srcrect {std::nullopt};
+	/** The portion of the screen to be rendered on (or the full render target if nullopt). */
 	std::optional<SDL_Rect> dstrect {std::nullopt};
+	/** The color or texture to be rendered on the target.  */
 	std::variant<SDL_Color, std::string> col_or_path_to_tex {SDL_Color{0, 0, 0, 255}};
+	/** The angle with which the texture should be rotated by. */
 	float angle {0.0f};
+	/** The texture's flip state. */
 	SDL_RendererFlip flip {SDL_FLIP_NONE};
 };
 
+/** Class to manage SDL objects and functionalities. */
 class Sdl {
 
 private:
+
+	/** SDL session initializer class. */
 	class Base {
 		friend class Sdl;
 		Base(Uint32 flags) {
@@ -53,12 +92,14 @@ private:
 		}
 	};
 
+	// Private variables.
+
 	Base base;
 	Window win;
 	Renderer ren;
 	std::map<std::string, Texture> textures_map;
 	bool is_running {true};
-	int scroll_speed {0};
+	int scroll_state {0};
 	std::pair<int, int> mouse_pos;
 	bool left_click {false};
 	bool f_key {false};
@@ -104,27 +145,40 @@ public:
 		)
 	{}
 	
+	/** Sets the color of the renderer.
+	 * @param col The color or the renderer.
+	 * @throws std::runtime_error on failure. */
 	void set_draw_color(SDL_Color col) {
 		if (SDL_SetRenderDrawColor(ren.get(), col.r, col.g, col.b, col.a))
 			throw std::runtime_error("Failed to set draw color.");
 	}
 
+	/** Clears the renderer with the specified color.
+	 * @param col The color to be used.
+	 * @throws std::runtime_error on failure. */
 	void clear(SDL_Color col) {
 		set_draw_color(col);
 		if (SDL_RenderClear(ren.get()))
 			throw std::runtime_error("Failed to clear renderer.");
 	}
 
+	/** Presents the renderer. */
 	void present() {
 		SDL_RenderPresent(ren.get());
 	}
 
+	/** Queries the current window size.
+	 * @return The window dimensions as std::pair<int, int> */
 	std::pair<int, int> win_size() {
 		int w, h;
 		SDL_GetWindowSize(win.get(), &w, &h);
 		return {w, h};
 	}
 
+	/** Loads and sotres a texture created from a bmp file if the given
+	 * texture has not been created yet.
+	 * @param path_to_bmp Path to the bmp file.
+	 * @throws std::runtime_error on failure.  */
 	void load_texture(std::string path_to_bmp) {
 		if (textures_map.find(path_to_bmp) != textures_map.end()) {
 			DBGMSG("Texture was loaded earlier for bmp: " << path_to_bmp);
@@ -163,12 +217,17 @@ public:
 		DBGMSG("New texture emplaced into map.");
 	}
 
+	/** Loads and sotres textures created from the bmp files if the given
+	 * textures have not been created yet.
+	 * @param path_to_bmps A vector of the paths to the bmp files.
+	 * @throws std::runtime_error on failure.  */
 	void load_texture(std::vector<std::string> paths_to_bmps) {
 		for (const auto& path : paths_to_bmps) {
 			load_texture(path);
 		}
 	}
 
+	/** Polls SDL events and updates internal variables. */
 	void poll_events() {
 		bool is_scrolling = false;
 		left_click = false;
@@ -190,7 +249,7 @@ public:
 					break;
 				case SDL_MOUSEWHEEL:
 					is_scrolling = true;
-					scroll_speed += event.wheel.y;
+					scroll_state += event.wheel.y;
 					break;
 				case SDL_MOUSEBUTTONDOWN:
 					if (event.button.button == SDL_BUTTON_LEFT)
@@ -201,41 +260,57 @@ public:
 		}
 		SDL_GetMouseState(&mouse_pos.first, &mouse_pos.second);
 		if (!is_scrolling) {
-			if (scroll_speed > 0)
-				scroll_speed--;
-			if (scroll_speed < 0)
-				scroll_speed++;
+			if (scroll_state > 0)
+				scroll_state--;
+			if (scroll_state < 0)
+				scroll_state++;
 		}
 	}
 
+	/** Get a boolean representing the inner state of the engine */
 	bool get_is_running() {
 		return is_running;
 	}
 
-	int get_scroll_speed() {
-		return scroll_speed;
+	/** Get the current mouse scroll state. 
+	 * @return 1 if scrolling down, -1 if scrolling up, otherwise 0. */
+	int get_scroll_state() {
+		return scroll_state;
 	}
 
+	/** Get the current mouse position.
+	 * @return The mouse position as std::pair<int, int>. */
 	auto get_mouse_pos() {
 		return mouse_pos;
 	}
 
+	/** Get the current state of the left mouse button.
+	 * @return true if left mouse button is down, ortherwise false. */
 	bool get_left_click() {
 		return left_click;
 	}
 
+	/** Get the current state of the f key.
+	 * @return true if the f key is down, ortherwise false. */
 	bool get_f_key() {
 		return f_key;
 	}
 
+	/** Get the current state of the r key.
+	 * @return true if the r key is down, ortherwise false. */
 	bool get_r_key() {
 		return r_key;
 	}
 
+	/** Get the current state of the s key.
+	 * @return true if the s key is down, ortherwise false. */
 	bool get_s_key() {
 		return s_key;
 	}
 
+	/** Draws the specified rendering context.
+	 * @param data The rendering context to be drawn.
+	 * @throws std::runtime_error on failure.  */
 	void draw(const RenderData& data) {
 		const SDL_Rect* srcrect =
 			data.srcrect.has_value() ? &data.srcrect.value() : nullptr;
@@ -260,6 +335,9 @@ public:
 		}
 	}
 
+	/** Draws the specified rendering contexts.
+	 * @param data A vector of rendering contexts to be drawn.
+	 * @throws std::runtime_error on failure. */
 	void draw(std::vector<RenderData> data) {
 		for (const auto& d : data) {
 			draw(d);

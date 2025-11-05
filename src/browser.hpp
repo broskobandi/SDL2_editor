@@ -1,3 +1,31 @@
+/*
+MIT License
+
+Copyright (c) 2025 broskobandi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/** @file src/browser.hpp
+ * @brief Private header file for the Browser class. 
+ * @details This file contains the definition of the Browser class which is 
+ * responsible for parsing and loading, presenting, and seleceting bmp files. */
 /** @file src/browser.hpp */
 
 #ifndef BROWSER_HPP
@@ -16,12 +44,15 @@ class Browser {
 
 private:
 
+	/** POD struct that contains data for a single thumbnail. */
 	struct Thumbnail {
+		/** The rect to render the thumbnail over. */
 		SDL_Rect rect;
+		/** Path to the bmp to be rendered over the thumbnail. */
 		std::string path_to_bmp;
-		// bool is_selected {false};
-		// bool is_highlighted = {false};
 	};
+
+	// Private variables.
 
 	float panel_width_multiplier;
 	SDL_Color panel_col;
@@ -30,6 +61,10 @@ private:
 	int thumbnails_offset {0};
 	std::string selected_bmp;
 
+	// Private methods
+
+	/** Sets the panel size based on the window size and the panel_width_multiplier.
+	 * @param win_size The current size of the window. */
 	void set_panel_size(std::pair<int, int> win_size) {
 		panel.w = static_cast<int>(static_cast<float>(win_size.first) * panel_width_multiplier);
 		panel.h = win_size.second;
@@ -37,6 +72,8 @@ private:
 		panel.y = 0;
 	}
 
+	/** Sets the size of the thumbnails based on the panel size.
+	 * @throws std::runtime_error if there are no thumbnails available. */
 	void set_thumbnails_size() {
 		if (!thumbnails.size())
 			throw std::runtime_error("Thumbnails vector is empty.");
@@ -50,6 +87,9 @@ private:
 		}
 	}
 
+	/** Handles thumbnail highlighting.
+	 * @param mouse_pos The current position of the mouse.
+	 * @param left_click The current state of the left mouse button. */
 	void set_thumbnail_highlight(std::pair<int,int> mouse_pos, bool left_click) {
 		for (auto& t : thumbnails) {
 			if (
@@ -63,11 +103,8 @@ private:
 				t.rect.y -= t.rect.w / 20;
 				if (left_click) {
 					if (t.path_to_bmp != selected_bmp) {
-					// if (!t.is_selected) {
-						// t.is_selected = true;
 						selected_bmp = t.path_to_bmp;
 					} else {
-						// t.is_selected = false;
 						selected_bmp.clear();
 					}
 				}
@@ -77,16 +114,20 @@ private:
 
 public:
 
+	/** Updates all elements in the browser.
+	 * @param win_size The current window size.
+	 * @param scroll_state The current state of the mouse wheel.
+	 * @param mouse_pos The current mouse position.
+	 * @param left_click The current state of the left mouse button. */
 	void update(
 		std::pair<int, int> win_size,
-		int scroll_speed,
+		int scroll_state,
 		std::pair<int,int> mouse_pos,
 		bool left_click
 	) {
 		if (mouse_pos.first < panel.w)
-			thumbnails_offset += scroll_speed;
+			thumbnails_offset += scroll_state;
 		if (thumbnails.front().rect.y > 0)
-			//let's not hardcode these..
 			thumbnails_offset -= 5;
 		if (thumbnails.back().rect.y < panel.h - panel.w)
 			thumbnails_offset += 5;
@@ -97,11 +138,16 @@ public:
 		set_thumbnail_highlight(mouse_pos, left_click);
 	}
 
+	/** Constructor for the Browser class.
+	 * @param win_size The current size of the window.
+	 * @param panel_width_multiplier The panel's size compared to the window size.
+	 * @param panel_col The panel's background color.
+	 * @param path The path of the working directory. */
 	Browser(
 		std::pair<int, int> win_size,
 		float panel_width_multiplier,
 		SDL_Color panel_col,
-		std::filesystem::path path
+		std::filesystem::path path // this should be passed in as a command line argument.
 	) :
 		panel_width_multiplier(panel_width_multiplier), panel_col(panel_col)
 	{
@@ -132,6 +178,7 @@ public:
 		set_thumbnails_size();
 	}
 
+	/** Creates and returns the most up-to-date rendering context. */
 	auto render_data() {
 		std::vector<RenderData> data;
 		
@@ -161,14 +208,17 @@ public:
 		return data;
 	}
 
+	/** Returns the path of the currently selected bmp. */
 	std::string get_selected_bmp() {
 		return selected_bmp;
 	}
 
+	/** Returns the current width of the side panel. */
 	int get_panel_w() {
 		return panel.w;
 	}
 
+	/** Returns a vector of the paths to all the bmp files found in the working directory. */
 	auto get_paths_to_bmps() {
 		std::vector<std::string> paths;
 		for (const auto& t: thumbnails) {
