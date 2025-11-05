@@ -1,5 +1,6 @@
 # SDL2_editor
 A simple map editor to be used for 2D games written with SDL2 in C++.
+A 2D game engine into which these maps can be loaded is under construction.
 ## Demo
 ![demo](example/demo.gif)
 ## Prerequisites
@@ -49,3 +50,4 @@ make &&
 # Todo
 - [ ] Specify working directory via command line argument.
 - [ ] Specify output file name via command line argument or via GUI.
+- [ ] Add support for animated tiles.
