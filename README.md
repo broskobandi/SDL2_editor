@@ -46,3 +46,6 @@ make &&
     ...
 ]
 ```
+# Todo
+- [ ] Specify working directory via command line argument.
+- [ ] Specify output file name via command line argument or via GUI.
