@@ -63,6 +63,7 @@ private:
 	bool left_click {false};
 	bool f_key {false};
 	bool r_key {false};
+	bool s_key {false};
 
 public:
 
@@ -173,6 +174,7 @@ public:
 		left_click = false;
 		r_key = false;
 		f_key = false;
+		s_key = false;
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -183,6 +185,8 @@ public:
 						f_key = true;
 					if (event.key.keysym.sym == SDLK_r)
 						r_key = true;
+					if (event.key.keysym.sym == SDLK_s)
+						s_key = true;
 					break;
 				case SDL_MOUSEWHEEL:
 					is_scrolling = true;
@@ -226,6 +230,10 @@ public:
 
 	bool get_r_key() {
 		return r_key;
+	}
+
+	bool get_s_key() {
+		return s_key;
 	}
 
 	void draw(const RenderData& data) {

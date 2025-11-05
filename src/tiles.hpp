@@ -4,18 +4,51 @@
 #include "core.hpp"
 #include <string>
 #include <vector>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 using namespace Core;
+using json = nlohmann::json;
+
+struct Tile {
+	SDL_Rect rect {0, 0, 0, 0};
+	std::string path_to_bmp;
+	bool is_set {false};
+	float angle {0.0f};
+	SDL_RendererFlip flip {SDL_FLIP_NONE};
+};
+
+inline void to_json(json& j, const Tile& t) {
+	j = json{
+		{"x", t.rect.x},
+		{"y", t.rect.y},
+		{"w", t.rect.w},
+		{"h", t.rect.h},
+		{"path_to_bmp", t.path_to_bmp},
+		{"angle", t.angle}, {"flip", t.flip}
+	};
+}
+
+inline void from_json(const json& j, Tile& t) {
+	j.at("x").get_to(t.rect.x);
+	j.at("y").get_to(t.rect.y);
+	j.at("w").get_to(t.rect.w);
+	j.at("h").get_to(t.rect.h);
+	j.at("path_to_bmp").get_to(t.path_to_bmp);
+	j.at("angle").get_to(t.angle);
+	j.at("flip").get_to(t.flip);
+}
+
 
 class Tiles {
 private:
-	struct Tile {
-		SDL_Rect rect {0, 0, 0, 0};
-		std::string path_to_bmp;
-		bool is_set {false};
-		float angle {0.0f};
-		SDL_RendererFlip flip;
-	};
+	// struct Tile {
+	// 	SDL_Rect rect {0, 0, 0, 0};
+	// 	std::string path_to_bmp;
+	// 	bool is_set {false};
+	// 	float angle {0.0f};
+	// 	SDL_RendererFlip flip;
+	// };
 	int cols, size;
 	std::vector<Tile> tiles;
 	SDL_Color bg_col;
@@ -34,6 +67,12 @@ private:
 				cur_col = 0;
 			}
 		}
+	}
+
+	void save() {
+		json j = tiles;
+		std::ofstream file("tiles.json");
+		file << j.dump(4);
 	}
 
 public:
@@ -73,7 +112,7 @@ public:
 		std::pair<int, int> mouse_pos,
 		bool left_click, std::string path_to_bmp,
 		int panel_w,
-		bool f_key, bool r_key
+		bool f_key, bool r_key, bool s_key
 	) {
 
 		distribute_tiles(panel_w);
@@ -106,6 +145,10 @@ public:
 				if (!tile.is_set)
 					tile.path_to_bmp.clear();
 			}
+		}
+
+		if (s_key) {
+			save();
 		}
 	}
 
