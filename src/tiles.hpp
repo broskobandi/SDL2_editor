@@ -12,6 +12,8 @@ private:
 	struct Tile {
 		SDL_Rect rect {0, 0, 0, 0};
 		std::string path_to_bmp;
+		bool is_set {false};
+		float angle {0.0f};
 	};
 	int cols, size;
 	std::vector<Tile> tiles;
@@ -51,6 +53,7 @@ public:
 			tile.dstrect = t.rect;
 			if (!t.path_to_bmp.empty()) {
 				tile.col_or_path_to_tex = t.path_to_bmp;
+				tile.angle = t.angle;
 				data.push_back(tile);
 			} else {
 				tile.col_or_path_to_tex = SDL_Color{0, 0, 0, 255};
@@ -67,9 +70,11 @@ public:
 	void update(
 		std::pair<int, int> mouse_pos,
 		bool left_click, std::string path_to_bmp,
-		int panel_w
+		int panel_w, int scroll_speed
 	) {
+
 		distribute_tiles(panel_w);
+
 		for (auto& tile : tiles) {
 			if (
 				mouse_pos.first >= tile.rect.x &&
@@ -77,9 +82,19 @@ public:
 				mouse_pos.second >= tile.rect.y &&
 				mouse_pos.second <= tile.rect.y + tile.rect.h
 		    ) {
+				if (!tile.is_set)
+					tile.path_to_bmp = path_to_bmp;
+				if (scroll_speed > 0)
+					tile.angle += 90.0f;
+				if (scroll_speed < 0)
+					tile.angle -= 90.0f;
 				if (left_click) {
+					tile.is_set = true;
 					tile.path_to_bmp = path_to_bmp;
 				}
+			} else {
+				if (!tile.is_set)
+					tile.path_to_bmp.clear();
 			}
 		}
 	}
