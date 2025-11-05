@@ -12,3 +12,5 @@ target_include_directories(test PRIVATE src)
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror -Wunused-result -Wconversion)
+
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
