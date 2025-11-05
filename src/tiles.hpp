@@ -14,6 +14,7 @@ private:
 		std::string path_to_bmp;
 		bool is_set {false};
 		float angle {0.0f};
+		SDL_RendererFlip flip;
 	};
 	int cols, size;
 	std::vector<Tile> tiles;
@@ -54,6 +55,7 @@ public:
 			if (!t.path_to_bmp.empty()) {
 				tile.col_or_path_to_tex = t.path_to_bmp;
 				tile.angle = t.angle;
+				tile.flip = t.flip;
 				data.push_back(tile);
 			} else {
 				tile.col_or_path_to_tex = SDL_Color{0, 0, 0, 255};
@@ -70,7 +72,8 @@ public:
 	void update(
 		std::pair<int, int> mouse_pos,
 		bool left_click, std::string path_to_bmp,
-		int panel_w, int scroll_speed
+		int panel_w,
+		bool f_key, bool r_key
 	) {
 
 		distribute_tiles(panel_w);
@@ -84,10 +87,17 @@ public:
 		    ) {
 				if (!tile.is_set)
 					tile.path_to_bmp = path_to_bmp;
-				if (scroll_speed > 0)
+				if (r_key)
 					tile.angle += 90.0f;
-				if (scroll_speed < 0)
-					tile.angle -= 90.0f;
+				if (f_key) {
+					if (static_cast<int>(tile.flip) < 2) {
+						int f = static_cast<int>(tile.flip);
+						f++;
+						tile.flip = static_cast<SDL_RendererFlip>(f);
+					} else {
+						tile.flip = SDL_FLIP_NONE;
+					}
+				}
 				if (left_click) {
 					tile.is_set = true;
 					tile.path_to_bmp = path_to_bmp;

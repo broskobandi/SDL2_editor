@@ -61,6 +61,8 @@ private:
 	int scroll_speed {0};
 	std::pair<int, int> mouse_pos;
 	bool left_click {false};
+	bool f_key {false};
+	bool r_key {false};
 
 public:
 
@@ -169,12 +171,18 @@ public:
 	void poll_events() {
 		bool is_scrolling = false;
 		left_click = false;
+		r_key = false;
+		f_key = false;
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 				case SDL_KEYDOWN:
 					if (event.key.keysym.sym == SDLK_q)
 						is_running = false;
+					if (event.key.keysym.sym == SDLK_f)
+						f_key = true;
+					if (event.key.keysym.sym == SDLK_r)
+						r_key = true;
 					break;
 				case SDL_MOUSEWHEEL:
 					is_scrolling = true;
@@ -194,7 +202,6 @@ public:
 			if (scroll_speed < 0)
 				scroll_speed++;
 		}
-		// clear({30, 70, 70, 255});
 	}
 
 	bool get_is_running() {
@@ -211,6 +218,14 @@ public:
 
 	bool get_left_click() {
 		return left_click;
+	}
+
+	bool get_f_key() {
+		return f_key;
+	}
+
+	bool get_r_key() {
+		return r_key;
 	}
 
 	void draw(const RenderData& data) {

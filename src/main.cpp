@@ -42,7 +42,7 @@ int main(void) {
 
 			browser.update(sdl.win_size(), sdl.get_scroll_speed(), sdl.get_mouse_pos(), sdl.get_left_click());
 			// tiles.update(browser.get_panel_w());
-			tiles.update(sdl.get_mouse_pos(), sdl.get_left_click(), browser.get_selected_bmp(), browser.get_panel_w(), sdl.get_scroll_speed());
+			tiles.update(sdl.get_mouse_pos(), sdl.get_left_click(), browser.get_selected_bmp(), browser.get_panel_w(), sdl.get_f_key(), sdl.get_r_key());
 			sdl.draw(browser.render_data());
 			sdl.draw(tiles.render_data());
 			sdl.present();
