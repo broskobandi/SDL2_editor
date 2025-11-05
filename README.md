@@ -51,3 +51,4 @@ make &&
 - [ ] Specify working directory via command line argument.
 - [ ] Specify output file name via command line argument or via GUI.
 - [ ] Add support for animated tiles.
+- [ ] Add tile type property (wall, floor, door, lava, etc...)
