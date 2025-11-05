@@ -22,3 +22,27 @@ make &&
 - F -> flip tile.
 - S -> save map. (for now, it simply creates a tiles.json in the current dir)
 - Q -> exit editor. 
+# Output format
+```json
+[
+    {
+        "angle": 0.0,
+        "flip": 0,
+        "h": 64,
+        "path_to_bmp": "<path>/corner.bmp",
+        "w": 64,
+        "x": 80,
+        "y": 0
+    },
+    {
+        "angle": 0.0,
+        "flip": 0,
+        "h": 64,
+        "path_to_bmp": "<path>/wall.bmp",
+        "w": 64,
+        "x": 144,
+        "y": 0
+    },
+    ...
+]
+```
